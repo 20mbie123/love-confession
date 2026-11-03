@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>很正式的一个环节 ❤️</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #ffe0ec, #ffc1d6, #ffdfeb);
+    padding: 20px;
+}
+
+/* 主卡片 */
+.card {
+    width: 100%;
+    max-width: 480px;
+    padding: 45px 25px;
+    border-radius: 28px;
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 15px 45px rgba(255,80,130,0.2);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.heart {
+    font-size: 65px;
+    margin-bottom: 20px;
+    animation: heartbeat 1.2s infinite;
+}
+
+h1 {
+    font-size: clamp(23px, 5vw, 30px);
+    color: #e94b83;
+    margin-bottom: 18px;
+    line-height: 1.6;
+}
+
+.subtitle {
+    color: #a66a82;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+/* 按钮区域 */
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    min-height: 65px;
+    margin: 0 auto;
+}
+
+button {
+    border: none;
+    padding: 13px 35px;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* YES按钮 */
+#yes {
+    color: white;
+    background: linear-gradient(135deg, #ff5791, #ff85ac);
+    transition: transform 0.2s;
+    z-index: 3;
+}
+
+#yes:hover {
+    transform: scale(1.1);
+}
+
+/* NO按钮 */
+#no {
+    color: #e76a91;
+    background: #fff0f5;
+    transform-origin: center;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+#hint {
+    min-height: 25px;
+    margin-top: 22px;
+    color: #e76a91;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* 成功页面 */
+#success {
+    display: none;
+}
+
+#success h1 {
+    font-size: clamp(27px, 6vw, 36px);
+}
+
+#success p {
+    color: #d65d87;
+    font-size: 17px;
+    line-height: 2;
+}
+
+.success-heart {
+    font-size: 85px;
+    animation: heartbeat 1s infinite;
+}
+
+/* 漂浮爱心 */
+.floating-heart {
+    position: fixed;
+    bottom: -30px;
+    font-size: 22px;
+    opacity: 0.7;
+    animation: floatUp 6s linear forwards;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes heartbeat {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* 手机端适配 */
+@media (max-width: 480px) {
+    .card {
+        padding: 38px 20px;
+    }
+
+    .heart {
+        font-size: 55px;
+    }
+
+    .buttons {
+        gap: 25px;
+    }
+
+    button {
+        padding: 12px 28px;
+        font-size: 16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 表白页面 -->
+<div class="card" id="question">
+
+    <div class="heart">❤️</div>
+
+    <h1>陈韬羽，你愿意做我的女朋友吗？</h1>
+
+    <p class="subtitle">
+        你可以拒绝～
+    </p>
+
+    <div class="buttons">
+
+        <button id="yes" onclick="sayYes()">
+            YES ❤️
+        </button>
+
+        <button id="no" onclick="moveNo()">
+            NO 💔
+        </button>
+
+    </div>
+
+    <p id="hint"></p>
+
+</div>
+
+
+<!-- 表白成功页面 -->
+<div class="card" id="success">
+
+    <div class="success-heart">💗</div>
+
+    <h1>恭喜你！</h1>
+
+    <p>
+        正式成为我的女朋友！<br>
+         你过关！<br><br>
+        
+    </p>
+
+    <div style="font-size:35px; margin-top:20px;">
+        💑 🌹 💕
+    </div>
+
+</div>
+
+
+<script>
+
+// NO按钮点击次数
+let noCount = 0;
+
+// 每次点击显示的文字
+const hints = [
+    "真的不再考虑一下吗？🥺",
+    "真粗心，又点错了啊",
+    "怎么又点错了？",
+    "是网卡了吧",
+    "妈妈",
+    "好吧其实你怎么点都没用的",
+    "你还不信啊？",
+    "嘿嘿"
+];
+
+
+// 点击YES
+function sayYes() {
+
+    document.getElementById("question").style.display = "none";
+
+    document.getElementById("success").style.display = "block";
+
+}
+
+
+// 点击NO
+function moveNo() {
+
+    const no = document.getElementById("no");
+    const hint = document.getElementById("hint");
+
+    noCount++;
+
+    // 每点击一次，缩小到之前的80%
+    const scale = Math.pow(0.8, noCount);
+
+    no.style.transform = `scale(${scale})`;
+
+    // 显示提示文字
+    hint.innerText = hints[
+        Math.min(noCount - 1, hints.length - 1)
+    ];
+
+    // 缩小到一定程度后消失
+    if (scale < 0.05) {
+
+        no.style.opacity = "0";
+        no.style.pointerEvents = "none";
+
+        setTimeout(() => {
+            no.style.display = "none";
+        }, 350);
+
+        hint.innerText = "好像只有一个选项了嘿嘿";
+
+    }
+
+}
+
+
+// 随机生成漂浮爱心
+function createHeart() {
+
+    const heart = document.createElement("div");
+
+    heart.className = "floating-heart";
+
+    const hearts = ["❤️", "💕", "💗", "💖", "🌸"];
+
+    heart.innerHTML = hearts[
+        Math.floor(Math.random() * hearts.length)
+    ];
+
+    heart.style.left = Math.random() * 100 + "vw";
+
+    heart.style.animationDuration =
+        (4 + Math.random() * 4) + "s";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => {
+        heart.remove();
+    }, 8000);
+
+}
+
+
+// 每隔600毫秒生成一个爱心
+setInterval(createHeart, 600);
+
+</script>
+
+</body>
+</html>
+
